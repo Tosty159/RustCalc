@@ -1,4 +1,5 @@
 mod io;
+mod chars;
 
 fn main() {
     println!("RustCalc prototype.");

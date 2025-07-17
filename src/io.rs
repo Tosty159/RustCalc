@@ -1,3 +1,5 @@
+use crate::chars::is_valid;
+
 use std::io::{self, stdout, Write};
 use crossterm::{
     event::{self, Event, KeyCode},
@@ -20,11 +22,11 @@ pub fn read_input(message: &str) -> io::Result<String> {
             if let Event::Key(key_event) = event::read()? {
                 match key_event.code {
                     KeyCode::Enter => break,
-                    KeyCode::Char(c) => {
-                        if c.is_digit(10) {
-                           write!(stdout(), "{c}")?;
+                    KeyCode::Char(ch) => {
+                        if is_valid(ch) {
+                           write!(stdout(), "{ch}")?;
                            stdout().flush()?;
-                           input.push(c);
+                           input.push(ch);
                         }
                     },
                     _ => {},

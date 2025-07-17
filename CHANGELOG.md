@@ -11,3 +11,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Getting user input.
 - Enable raw mode in the terminal to make sure the input is valid straight-away.
+- Allow whole numbers, simple operators('+', '-', '*', '/'), and spaces.
