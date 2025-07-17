@@ -1,23 +1,19 @@
-use std::io::{stdin, stdout, Write};
+mod io;
 
 fn main() {
     println!("RustCalc prototype.");
     println!("Press 'Ctrl+c' to exit.");
-    println!("Input h/H for help.");
-    println!("\n");
+    println!("Input h/H for help.\n");
 
     loop {
         let mut expression = String::new();
 
-        print!("RustCalc> ");
-        let _ = stdout().flush();
-
-        stdin().read_line(&mut expression).expect("Incorrect expression.");
-        if let Some('\n') = expression.chars().next_back() {
-            expression.pop();
-        }
-        if let Some('\r') = expression.chars().next_back() {
-            expression.pop();
+        match io::read_input(&mut expression, "RustCalc> ") {
+            Ok(()) => {},
+            Err(e) => {
+                println!("Error: {e}");
+                continue;
+            }
         }
 
         println!("Echo: {expression}");
