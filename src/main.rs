@@ -6,15 +6,13 @@ fn main() {
     println!("Input h/H for help.\n");
 
     loop {
-        let mut expression = String::new();
-
-        match io::read_input(&mut expression, "RustCalc> ") {
-            Ok(()) => {},
+        let expression = match io::read_input("RustCalc> ") {
+            Ok(s) => s,
             Err(e) => {
                 println!("Error: {e}");
                 continue;
             }
-        }
+        };
 
         println!("Echo: {expression}");
     }
