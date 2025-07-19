@@ -4,7 +4,7 @@ use std::fmt::Display;
 
 #[derive(Debug, Clone)]
 pub enum Token {
-    Number(u64),
+    Number(i64),
     Operator(Operator),
 }
 
@@ -35,7 +35,7 @@ pub fn tokenize(s: impl AsRef<str>) -> LexerResult {
 
     let mut last: Option<Token> = None;
 
-    let mut current_number: u64 = 0;
+    let mut current_number: i64 = 0;
     while let Some(ch) = chars.next() {
         if !is_valid(ch) {
             return LexerResult::Err(
@@ -58,7 +58,7 @@ pub fn tokenize(s: impl AsRef<str>) -> LexerResult {
         }
 
         if ch.is_digit(10) {
-            let digit = (ch as u8 - b'0') as u64;
+            let digit = (ch as u8 - b'0') as i64;
             if let Some(next) = current_number.checked_mul(10).and_then(|n| n.checked_add(digit)) {
                 current_number = next;
             } else {

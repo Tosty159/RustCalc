@@ -4,7 +4,7 @@ use std::fmt::Display;
 
 pub enum EvalError {
     InsufficientOperands(Operator),
-    OutOfPlaceInteger(u64),
+    OutOfPlaceInteger(i64),
 }
 
 impl Display for EvalError {
@@ -17,7 +17,7 @@ impl Display for EvalError {
 }
 
 pub enum EvalResult {
-    Ok(i128),
+    Ok(i64),
     Err(EvalError),
 }
 
@@ -28,7 +28,7 @@ fn eval_next(queue: &mut Vec<Token>) -> EvalResult {
         Token::Number(n) => EvalResult::Err(EvalError::OutOfPlaceInteger(n)),
         Token::Operator(op) => {
             let num_operands = op.num_operands();
-            let mut operands: Vec<i128> = Vec::new();
+            let mut operands: Vec<i64> = Vec::new();
 
             while operands.len() < num_operands as usize {
                 let last = queue.last().cloned();
@@ -39,7 +39,7 @@ fn eval_next(queue: &mut Vec<Token>) -> EvalResult {
                 match last.unwrap() {
                     Token::Number(n) => {
                         queue.pop();
-                        operands.push(n.into())
+                        operands.push(n)
                     },
                     Token::Operator(_) => {
                         match eval_next(queue) {
@@ -69,7 +69,7 @@ fn eval_output(queue: &mut Vec<Token>) -> EvalResult {
         Token::Number(n) => EvalResult::Ok(n.into()),
         Token::Operator(op) => {
             let num_operands = op.num_operands();
-            let mut operands: Vec<i128> = Vec::new();
+            let mut operands: Vec<i64> = Vec::new();
 
             while operands.len() < num_operands as usize {
                 let next = queue.last().cloned();

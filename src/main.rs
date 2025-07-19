@@ -12,6 +12,9 @@ fn main() {
     println!("Press 'Ctrl+c' to exit.");
     println!("Input h/H for help.\n");
 
+    println!("I64 min: {}", i64::MIN);
+    println!("U64 max: {}", u64::MAX);
+
     loop {
         let expression = match io::read_input("RustCalc> ") {
             Ok(s) => s,

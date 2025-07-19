@@ -88,7 +88,7 @@ impl Operator {
         }
     }
 
-    pub fn eval(&self, operands: Vec<i128>) -> Option<i128> {
+    pub fn eval(&self, operands: Vec<i64>) -> Option<i64> {
         if operands.len() != self.num_operands() as usize {
             return None;
         }
