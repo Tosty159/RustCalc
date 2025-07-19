@@ -1,10 +1,11 @@
 use crate::chars::{is_valid, is_operator};
+use crate::operator::{Operator};
 use std::fmt::Display;
 
 #[derive(Debug)]
 pub enum Token {
     Number(u64),
-    Operator(String),
+    Operator(Operator),
 }
 
 pub enum LexerError {
@@ -32,6 +33,8 @@ pub fn tokenize(s: impl AsRef<str>) -> LexerResult {
 
     let mut tokens: Vec<Token> = Vec::new();
 
+    let mut last: Option<Token> = None;
+
     let mut current_number: u64 = 0;
     while let Some(ch) = chars.next() {
         if !is_valid(ch) {
@@ -46,6 +49,7 @@ pub fn tokenize(s: impl AsRef<str>) -> LexerResult {
                     current_number
                 )
             );
+            last = Some(Token::Number(0));
             current_number = 0;
         }
 
@@ -62,11 +66,19 @@ pub fn tokenize(s: impl AsRef<str>) -> LexerResult {
             }
         } else if is_operator(ch) {
             // All operators so far are one character long
+            let is_unary = if let Some(Token::Operator(_)) = last {
+                true
+            } else {
+                false
+            };
+
+            let op = Operator::new(String::from(ch), is_unary);
             tokens.push(
                 Token::Operator(
-                    String::from(ch)
+                    op.clone()
                 )
             );
+            last = Some(Token::Operator(op.clone()));
         }
     }
 

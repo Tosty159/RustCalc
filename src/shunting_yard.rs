@@ -1,45 +1,40 @@
 use crate::lexer::Token;
-
-fn precedence(op: impl AsRef<str>) -> i32 {
-    let op = op.as_ref();
-
-    return match op {
-        "*" | "/" => 2,
-        "+" | "-" => 1,
-        _ => -1, // Invalid operator
-    }
-}
-
-fn is_left_associative(_op: impl AsRef<str>) -> bool {
-    true // All ops are left-associative for now
-}
+use crate::operator::Operator;
 
 pub fn shunting_yard(tokens: Vec<Token>) -> Vec<Token> {
     let mut output_queue: Vec<Token> = Vec::new();
-    let mut operator_stack: Vec<Token> = Vec::new();
+    let mut operator_stack: Vec<Operator> = Vec::new();
 
     for token in tokens {
         match token {
             Token::Number(_) => output_queue.push(token),
-            Token::Operator(op) => {
+            Token::Operator(op1) => {
                 while !operator_stack.is_empty() {
-                    if let Token::Operator(top) = operator_stack.last().unwrap() {
-                        if precedence(top) > precedence(&op) ||
-                            (precedence(top) == precedence(&op) && is_left_associative(&op))
-                        {
-                            output_queue.push(operator_stack.pop().unwrap());
-                        } else {
-                            break;
-                        }
+                    let op2 = operator_stack.last().unwrap();
+
+                    if op2.precedence > op1.precedence ||
+                        (op2.precedence == op1.precedence && op1.is_left_associative())
+                    {
+                        output_queue.push(
+                            Token::Operator(
+                                operator_stack.pop().unwrap()
+                            )
+                        );
+                    } else {
+                        break;
                     }
                 }
-                operator_stack.push(Token::Operator(op.clone()));
+                operator_stack.push(op1.clone());
             }
         }
     }
 
     while !operator_stack.is_empty() {
-        output_queue.push(operator_stack.pop().unwrap());
+        output_queue.push(
+            Token::Operator(
+                operator_stack.pop().unwrap()
+            )
+        );
     }
 
     output_queue

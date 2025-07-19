@@ -2,6 +2,7 @@ mod io;
 mod chars;
 mod lexer;
 mod shunting_yard;
+mod operator;
 
 use lexer::{LexerResult, tokenize};
 use shunting_yard::shunting_yard;
