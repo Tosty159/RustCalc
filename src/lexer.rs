@@ -2,7 +2,7 @@ use crate::chars::{is_valid, is_operator};
 use crate::operator::{Operator};
 use std::fmt::Display;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Token {
     Number(u64),
     Operator(Operator),
@@ -13,11 +13,6 @@ pub enum LexerError {
     InvalidCharacter(char),
 }
 
-pub enum LexerResult {
-    Ok(Vec<Token>),
-    Err(LexerError),
-}
-
 impl Display for LexerError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -25,6 +20,11 @@ impl Display for LexerError {
             LexerError::InvalidCharacter(ch) => write!(f, "LexerError: Invalid character: '{ch}'."),
         }
     }
+}
+
+pub enum LexerResult {
+    Ok(Vec<Token>),
+    Err(LexerError),
 }
 
 // 5 + 3 -> Number(5) Operator('+') Number(3)
@@ -72,7 +72,7 @@ pub fn tokenize(s: impl AsRef<str>) -> LexerResult {
                 false
             };
 
-            let op = Operator::new(String::from(ch), is_unary);
+            let op = Operator::new(String::from(ch), is_unary).unwrap();
             tokens.push(
                 Token::Operator(
                     op.clone()

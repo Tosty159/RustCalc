@@ -5,7 +5,7 @@ mod shunting_yard;
 mod operator;
 
 use lexer::{LexerResult, tokenize};
-use shunting_yard::shunting_yard;
+use shunting_yard::{EvalResult, shunting_yard};
 
 fn main() {
     println!("RustCalc prototype.");
@@ -31,7 +31,13 @@ fn main() {
             }
         };
 
-        let output_queue = shunting_yard(tokens);
+        let output_queue = match shunting_yard(tokens) {
+            EvalResult::Ok(o) => o,
+            EvalResult::Err(e) => {
+                println!("{e}");
+                continue;
+            }
+        };
 
         println!("Output: {output_queue:?}");
     }
