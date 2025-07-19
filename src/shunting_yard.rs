@@ -16,12 +16,9 @@ impl Display for EvalError {
     }
 }
 
-pub enum EvalResult {
-    Ok(i64),
-    Err(EvalError),
-}
+pub type EvalResult<T> = Result<T, EvalError>;
 
-fn eval_next(queue: &mut Vec<Token>) -> EvalResult {
+fn eval_next(queue: &mut Vec<Token>) -> EvalResult<i64> {
     let next = queue.pop().unwrap();
 
     match next {
@@ -62,7 +59,7 @@ fn eval_next(queue: &mut Vec<Token>) -> EvalResult {
     }
 }
 
-fn eval_output(queue: &mut Vec<Token>) -> EvalResult {
+fn eval_output(queue: &mut Vec<Token>) -> EvalResult<i64> {
     let last = queue.pop().unwrap();
 
     match last {
@@ -103,7 +100,7 @@ fn eval_output(queue: &mut Vec<Token>) -> EvalResult {
     }
 }
 
-pub fn shunting_yard(tokens: Vec<Token>) -> EvalResult {
+pub fn shunting_yard(tokens: Vec<Token>) -> EvalResult<i64> {
     let mut output_queue: Vec<Token> = Vec::new();
     let mut operator_stack: Vec<Operator> = Vec::new();
 

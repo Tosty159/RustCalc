@@ -22,13 +22,10 @@ impl Display for LexerError {
     }
 }
 
-pub enum LexerResult {
-    Ok(Vec<Token>),
-    Err(LexerError),
-}
+pub type LexerResult<T> = Result<T, LexerError>;
 
 // 5 + 3 -> Number(5) Operator('+') Number(3)
-pub fn tokenize(s: impl AsRef<str>) -> LexerResult {
+pub fn tokenize(s: impl AsRef<str>) -> LexerResult<Vec<Token>> {
     let mut chars = s.as_ref().chars().peekable();
 
     let mut tokens: Vec<Token> = Vec::new();
