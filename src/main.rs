@@ -1,5 +1,8 @@
 mod io;
 mod chars;
+mod lexer;
+
+use lexer::{LexerResult, tokenize};
 
 fn main() {
     println!("RustCalc prototype.");
@@ -10,13 +13,21 @@ fn main() {
         let expression = match io::read_input("RustCalc> ") {
             Ok(s) => s,
             Err(e) => {
-                if e.kind() == std::io::ErrorKind::Interrupted { println!();break; }
+                if e.kind() == std::io::ErrorKind::Interrupted { println!(); break; }
 
                 println!("Error: {e}");
                 continue;
             }
         };
 
-        println!("Echo: {expression}");
+        let tokens = match tokenize(expression) {
+            LexerResult::Ok(t) => t,
+            LexerResult::Err(e) => {
+                println!("{e}");
+                continue;
+            }
+        };
+        
+        println!("Tokens: {tokens:?}");
     }
 }
