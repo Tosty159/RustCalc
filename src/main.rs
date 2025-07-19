@@ -1,8 +1,10 @@
 mod io;
 mod chars;
 mod lexer;
+mod shunting_yard;
 
 use lexer::{LexerResult, tokenize};
+use shunting_yard::shunting_yard;
 
 fn main() {
     println!("RustCalc prototype.");
@@ -27,7 +29,9 @@ fn main() {
                 continue;
             }
         };
-        
-        println!("Tokens: {tokens:?}");
+
+        let output_queue = shunting_yard(tokens);
+
+        println!("Output: {output_queue:?}");
     }
 }
