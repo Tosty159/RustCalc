@@ -1,12 +1,27 @@
 use crate::chars::is_valid;
 
-use std::io::{self, stdout, Write, ErrorKind, Error};
+use std::io::{self, stdout, Write};
 use crossterm::{
     event::{self, Event, KeyCode, KeyEvent, KeyModifiers},
     terminal::{disable_raw_mode, enable_raw_mode}
 };
 
-fn get_input() -> io::Result<String> {
+#[derive(Debug)]
+pub enum ReadError {
+    Io(io::Error),
+    Terminate,
+    Help,
+}
+
+impl From<io::Error> for ReadError {
+    fn from(err: io::Error) -> Self {
+        ReadError::Io(err)
+    }
+}
+
+pub type ReadResult<T> = Result<T, ReadError>;
+
+fn get_input() -> ReadResult<String> {
     let mut input = String::new();
 
     let mut position: u128 = 0;
@@ -17,12 +32,7 @@ fn get_input() -> io::Result<String> {
             if let Event::Key(KeyEvent { code, modifiers, .. }) = event::read()? {
                 match (code, modifiers) {
                     (KeyCode::Char('c'), KeyModifiers::CONTROL) => {
-                        return Err(
-                            Error::new(
-                                ErrorKind::Interrupted,
-                                String::new()
-                            )
-                        );
+                        return Err(ReadError::Terminate);
                     },
                     (KeyCode::Backspace, KeyModifiers::NONE) => {
                         if position <= 0 {
@@ -41,6 +51,9 @@ fn get_input() -> io::Result<String> {
                         input.push(ch);
                         position += 1;
                     },
+                    (KeyCode::Char('h'), KeyModifiers::NONE) | (KeyCode::Char('H'), KeyModifiers::SHIFT) => {
+                        return Err(ReadError::Help);
+                    },
                     _ => {},
                 }
             }
@@ -52,7 +65,7 @@ fn get_input() -> io::Result<String> {
 
 // The message is printed in the space where the user should input
 // e.g. message is "Input expression: ", the user will see: "Input expression: ".
-pub fn read_input(message: &str) -> io::Result<String> {
+pub fn read_input(message: &str) -> ReadResult<String> {
     print!("{message}");
     let _ = stdout().flush();
 
@@ -63,7 +76,5 @@ pub fn read_input(message: &str) -> io::Result<String> {
     disable_raw_mode()?;
     println!(); // This is for aesthetic reasons
 
-    if input.is_err() { return input; }
-
-    Ok(input.unwrap())
+    input
 }

@@ -4,24 +4,40 @@ mod lexer;
 mod shunting_yard;
 mod operator;
 
+use io::ReadError;
 use lexer::{LexerResult, tokenize};
 use shunting_yard::{EvalResult, shunting_yard};
+
+fn print_help() {
+    println!("Help screen:\n");
+
+    println!("Input a mathematical expression and RustCalc with evaluate it then print the result.");
+    println!("Press 'Enter' to input the expression, and 'Ctrl+c' to stop the program.");
+
+    println!("---------------------------------------------------------------------------------------");
+
+    println!("Valid characters:");
+    println!("- Digits(0-9).");
+    println!("- Basic arithmetic operators: '+', '-', '*', and '/'.");
+
+    println!("\nEnd of help screen.");
+}
 
 fn main() {
     println!("RustCalc prototype.");
     println!("Press 'Ctrl+c' to exit.");
     println!("Input h/H for help.\n");
 
-    println!("I64 min: {}", i64::MIN);
-    println!("U64 max: {}", u64::MAX);
-
     loop {
         let expression = match io::read_input("RustCalc> ") {
             Ok(s) => s,
-            Err(e) => {
-                if e.kind() == std::io::ErrorKind::Interrupted { break; }
-
-                println!("Error: {e}");
+            Err(ReadError::Io(e)) => {
+                println!("IoError: {e}");
+                continue;
+            },
+            Err(ReadError::Terminate) => break,
+            Err(ReadError::Help) => {
+                print_help();
                 continue;
             }
         };

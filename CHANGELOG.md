@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Implement the Help screen
 - Shunting yard algorithm
 - Add a lexer to tokenize the input into number and operators.
 - Allow whole numbers, simple operators('+', '-', '*', '/'), and spaces.
