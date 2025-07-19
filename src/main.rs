@@ -15,7 +15,7 @@ fn main() {
         let expression = match io::read_input("RustCalc> ") {
             Ok(s) => s,
             Err(e) => {
-                if e.kind() == std::io::ErrorKind::Interrupted { println!(); break; }
+                if e.kind() == std::io::ErrorKind::Interrupted { break; }
 
                 println!("Error: {e}");
                 continue;

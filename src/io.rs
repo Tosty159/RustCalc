@@ -8,6 +8,8 @@ use crossterm::{
 
 fn get_input() -> io::Result<String> {
     let mut input = String::new();
+
+    let mut position: u128 = 0;
     
     // Make sure to only take valid inputs
     loop {
@@ -22,12 +24,22 @@ fn get_input() -> io::Result<String> {
                             )
                         );
                     },
+                    (KeyCode::Backspace, KeyModifiers::NONE) => {
+                        if position <= 0 {
+                            continue;
+                        }
+
+                        write!(stdout(), "\x08 \x08")?;
+                        stdout().flush()?;
+                        input.pop();
+                        position -= 1;
+                    },
                     (KeyCode::Enter, KeyModifiers::NONE) => break,
-                    (KeyCode::Char(ch), KeyModifiers::NONE)
-                    if is_valid(ch) => {
+                    (KeyCode::Char(ch), KeyModifiers::NONE) if is_valid(ch) => {
                         write!(stdout(), "{ch}")?;
                         stdout().flush()?;
                         input.push(ch);
+                        position += 1;
                     },
                     _ => {},
                 }
